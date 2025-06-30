@@ -1,0 +1,18 @@
+{
+	"client":{
+      "alias":"NarrateMate",
+      "name":"Narrate Mate",
+      "logo_128":"./client_data/narratemate_128.png",
+      "logo_64":"./client_data/narratemate_64.png",
+      "logo":"./client_data/narratemate_256.png"
+    },
+    "base":"https://scarlet.robingis.com",
+    "clientName":"NarrateMate",
+	   "endpoints":{
+      "portal":"https://portal.scarlet.robingis.com",
+      "oauth":"https://oauth.scarlet.robingis.com",
+      "gis":"https://gis.scarlet.robingis.com",
+      "tiles":"https://{s}-tiles.scarlet.robingis.com",
+      "devour":"https://devour.scarlet.robingis.com"
+    }
+}

@@ -1,0 +1,79 @@
+<template>
+  <div class="page" data-name="home">
+    <!-- Top Navbar -->
+    <div class="navbar navbar-large">
+      <div class="navbar-bg"></div>
+      <div class="navbar-inner">
+        <div class="title sliding app_name">Narrate Mate</div>
+        <div class="right">
+          <a href="#" class="link icon-only panel-open" data-panel="right">
+            <i class="icon f7-icons if-not-md">menu</i>
+            <i class="icon material-icons if-md">menu</i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scrollable page content-->
+    <div class="page-content">
+      <div class="block">
+        <p><b>Welcome to NarrateMate!</b></p>
+        <p>Your AI-powered reading companion.</p>
+        <p>Sit back, relax, and let me bring your book to life. Whether you want to listen, read along, or simply enjoy the story — I'm here to narrate it for you.</p>
+        <p><b>Let the stories begin!</b></p>
+      </div>
+      <div class="block">
+      ${Cbooks.length >0 && $h`
+        <p><b>Continue Reading</b></p>
+      `}
+      
+        <div class="list list-strong list-dividers-ios list-outline-ios inset-md list-book-small">
+            ${Cbooks.map((book) => $h`
+            <div class="card demo-card-header-pic item-book popup-open">
+              <div style="background-image:url(${nm.url.cdn}${book.thumbnail})" valign="bottom" class="card-header"><span>${book.name}</span></div>
+              
+              </div>
+            `)}
+            <div style="clear:both;"></div>
+        </div>
+      </div>
+
+      <div class="block">
+      ${Fbooks.length >0 && $h`
+        <p><b>Read them Again :)</b></p>
+      `}
+      
+      <div class="list list-strong list-dividers-ios list-outline-ios inset-md list-book-small">
+            ${Fbooks.map((book) => $h`
+            <div class="card demo-card-header-pic item-book popup-open">
+              <div style="background-image:url(${nm.url.cdn}${book.thumbnail})" valign="bottom" class="card-header"><span>${book.name}</span></div>
+              <div class="card-content card-content-padding">
+                <span>${book.shortSummary}</span>
+              </div>
+              </div>
+            `)}
+            <div style="clear:both;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+export default (props, {$f7, $update,$on,$store,$h}) => {
+  let Cbooks=[];
+  let Fbooks=[];
+  let _history=localStorage.getItem("history");
+  _history=JSON.parse(_history);
+  for(var id in _history){
+    let book=_history[id];
+    if(book.total_pages!=book.current_page){
+      Cbooks.push(book);
+    }else{
+      Fbooks.push(book);
+    }
+  }
+  console.log(Cbooks);
+  $update();
+  return $render;
+}
+</script>

@@ -1,0 +1,244 @@
+<template>
+  <div class="page" data-name="catalog">
+    <div class="navbar">
+      <div class="navbar-bg"></div>
+      <div class="navbar-inner sliding">
+        <div class="title sliding app_name">Narrate Mate</div>
+      </div>
+    </div>
+    <div class="page-content">
+      <div class="list list-strong list-dividers-ios list-outline-ios inset-md list-book">
+          ${list.books.map((book) => $h`
+          <div class="card demo-card-header-pic item-book popup-open"  data-popup=".book-details" @click=${(e) => bookDetails(book)} data-name=${book.name}>
+            <div style="background-image:url(${nm.url.cdn}${book.thumbnail})" valign="bottom" class="card-header"><span>${book.name}</span></div>
+            <div class="card-content card-content-padding">
+              <span>${book.shortSummary}</span>
+            </div>
+            </div>
+          `)}
+      </div>
+      ${list.books.length === 3 && $h`
+      
+      `}
+    </div>
+    <div class="fab fab-extended fab-center-bottom">
+    <input type="file" id="book" style="display: none;" accept="application/pdf" />
+    <a class="">
+      <i class="icon f7-icons if-not-md">plus</i>
+      <div class="fab-text" @click=${addBook} >Add Book</div>
+    </a>
+  </div>
+  <div class="popup book-details">
+    <div class="view view-init">
+      <div class="page page-with-navbar-large">
+        <div class="navbar navbar-large navbar-transparent">
+          <div class="navbar-bg"></div>
+          <div class="navbar-inner">
+            <div class="title">${bookinfo.name}</div>
+            <div class="right"><a class="link popup-close" @click=${onBookClose}>Close</a></div>
+            <div class="title-large">
+              <div class="title-large-text">${bookinfo.name}</div>
+            </div>
+          </div>
+        </div>
+        <div class="page-content">
+          <div class="block">
+          <div class="grid grid-cols-2">
+            <div class="book-poster" style="background-image:url(${nm.url.cdn}${bookinfo.thumbnail})"></div>
+            <div class="grid grid-cols-1 grid-gap">
+              <div class="item-detail"><b>Author : </b>${bookinfo.author}</div>
+              <div class="item-detail"><b>Language : </b>${bookinfo.language}</div>
+              <div class="item-detail">${bookinfo.longSummary}</div>
+            </div>
+            <div class="item-inner card card-raised">
+                  <div class="item-input-wrap">
+                    <input type="text" placeholder="Language" readonly="readonly" id="language" style="height: 50px;padding: 10px;" />
+                  </div>
+                </div>
+            <div class="" style="padding-top:10px;">
+              <button class="button button-large button-round button-fill button-raised sheet-open" data-sheet=".sheet-push" @click=${(e) => openBook(bookinfo)} >Open Book</button>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="playbook" class="sheet-modal sheet-push sheet-modal-fullscreen" style="height: 100%;"  >
+      <div class="toolbar">
+        <div class="toolbar-inner">
+          <div class="left">${bookinfo.name}</div>
+          <div class="right">
+            <a class="link sheet-close" @click=${onBookClose}>Close</a>
+          </div>
+        </div>
+      </div>
+      <div class="sheet-modal-inner">
+        <div class="page-content">
+          <div class="slideShow">
+            <div class="slideContainer">
+
+            </div>
+            <a class="prev" @click=${(e) => prevSlide(false)} >Previous</a>
+            <a class="next" @click=${(e) => nextSlide(false)} >Next</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+</template>
+<script>
+
+  export default (props, {$f7, $update,$on,$store})  => {
+    let list = {"books":[]};
+    let bookinfo={}
+    const fetchBooks = async () => {
+      try {
+        list = await nm.api.books.list();
+        $update(); // triggers re-render of the template
+      } catch (err) {
+        console.error("Failed to load books:", err);
+        $f7.dialog.alert("Error loading books");
+      }
+    };
+    const bookDetails= function(e){
+    onBookClose()
+      bookinfo=e;
+      let lang=$store.getters.languages.value;
+      lang = lang.map(item => item.name);
+      console.log(lang);
+      let pickLanguage = $f7.picker.create({
+        inputEl: '#language',
+        cols: [
+          {
+            textAlign: 'center',
+            values: lang
+          }
+        ],
+        value: [bookinfo.language]
+      });
+      $update();
+    }
+    let pages=[];
+    const setHistory=function(id,n){
+      // Create 
+      let _history=localStorage.getItem("history");
+      if(!_history){
+        _history={};
+      }else{
+        _history=JSON.parse(_history);
+      }
+      if(!_history[id]){
+        let info=bookinfo;
+        info.total_pages=pages.length;
+        _history[id]=info;
+      }
+      if(n>=2){
+        _history[id].current_page=n;
+      }
+      localStorage.setItem("history",JSON.stringify(_history));
+    }
+
+    const openBook=async function(e){
+      // Now Load book.json
+      onBookClose();
+      let _book = await nm.api.books.get(e.id);
+      _book=_book.data;
+      pages=_book.pages;
+      showPage(_book.id,1);
+    }
+    const prevSlide=function(auto){
+      if(!auto){
+        clearTimeout(timeOutC);
+      }
+      const cpage=parseInt($(".slideShow .slideContainer .slide").data("page"));
+      const bid=$(".slideShow .slideContainer .slide").data("book_id");
+      if(cpage>1){
+        showPage(bid,cpage-1);
+      }
+    }
+    const nextSlide=function(auto){
+      if(!auto){
+        clearTimeout(timeOutC);
+      }
+      const cpage=parseInt($(".slideShow .slideContainer .slide").data("page"));
+      const bid=$(".slideShow .slideContainer .slide").data("book_id");
+      if(cpage<pages.length){
+        showPage(bid,cpage+1);
+      }
+    }
+    let timeOutC=null;
+    const showPage=async function(id,num){
+      setHistory(id,num);
+      $(".slideShow .slideContainer").html('')
+      $(".slideShow .slideContainer").append('<div id="'+id+'_'+num+'" class="slide" data-page="'+num+'" data-book_id="'+id+'" style="background-image:url('+nm.url.cdn+'books/'+id+'/pages/'+num+'.png"></div>')
+      // Now Get Audio
+      let lang=$("#language").val().toLowerCase();
+      let audioFile = await nm.api.books.audio(id,lang,num);
+      if(audioFile.audio!=""){
+        $(".slideShow .slideContainer").append('<audio id="book_audio" controls autoplay style="visibility: hidden;"><source src="'+nm.url.cdn+audioFile.audio+'" type="audio/mpeg"></audio>');
+        document.getElementById('book_audio').playbackRate = 0.8
+        var audio = document.getElementById('book_audio');
+        audio.addEventListener('ended', function() {
+            timeOutC=setTimeout(function(){
+              nextSlide();
+            },2000);
+        });
+      }else
+      {
+      setTimeout(function(){
+
+            nextSlide();
+            },2000);
+      }
+    }
+    const addBook = async function() {
+    // First get upload token
+    let upload=await nm.api.upload_token()
+      let fileSelection=document.getElementById('book');
+      fileSelection.click();
+      fileSelection.addEventListener('change', function() {
+      var toastProgress = $f7.toast.create({
+          text: '<div style="width: 100%; margin-top: 5px;"><div class="progressbar" id="upload-progress"></div></div>',
+          position: 'bottom',
+          cssClass: 'toast-full',
+          closeTimeout: 0 // Stay visible until manually closed
+      });
+      // Show the toast
+      toastProgress.open();
+
+      // Initialize progress bar at 0%
+      $f7.progressbar.set('#upload-progress', 0);
+          let file=this.files[0];
+          let url=upload.url;
+          file.filename=upload.fileKey;
+          let minfo={"mime_type":"application/pdf","filename":upload.filename,"filename_original":file.name,"id":"book"};
+          window.putObject(minfo,url,file,minfo.filename_original,function(e){
+            if(e.status=="progress"){
+              $f7.progressbar.set('#upload-progress', e.progress);
+            }else if(e.status=="error"||e.status=="completed"){
+              toastProgress.close();
+              setTimeout(function(){
+                toastProgress.destroy();
+              },400)
+            }
+          });
+      });
+    }
+    const onBookClose=function(){
+      $("#book_audio").remove();
+    }
+
+    setInterval(function(){
+      fetchBooks();
+    },30000);
+    $on('pageMounted', (e, page) => {
+      fetchBooks();
+    });
+    return $render;
+  }
+</script>

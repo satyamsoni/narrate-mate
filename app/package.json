@@ -1,0 +1,36 @@
+{
+  "name": "narrate-mate",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Narrate Mate",
+  "repository": "",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "npm run dev",
+    "dev": "cross-env NODE_ENV=development vite",
+    "build": "cross-env NODE_ENV=production vite build",
+    "postinstall": "cp --flat ./node_modules/framework7-icons/fonts/*.* ./src/fonts/ && cpy --flat ./node_modules/material-icons/iconfont/*.* ./src/fonts/"
+  },
+  "browserslist": [
+    "IOS >= 15",
+    "Safari >= 15",
+    "last 5 Chrome versions",
+    "last 5 Firefox versions"
+  ],
+  "dependencies": {
+    "dom7": "^4.0.6",
+    "framework7": "^8.3.4",
+    "framework7-icons": "^5.0.5",
+    "material-icons": "^1.13.14",
+    "skeleton-elements": "^4.0.1",
+    "swiper": "^11.2.8"
+  },
+  "devDependencies": {
+    "cpy-cli": "^5.0.0",
+    "cross-env": "^7.0.3",
+    "less": "^4.3.0",
+    "postcss-preset-env": "^10.2.3",
+    "rollup-plugin-framework7": "^1.2.1",
+    "vite": "^6.3.5"
+  }
+}

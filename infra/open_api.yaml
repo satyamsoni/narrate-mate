@@ -1,0 +1,265 @@
+openapi: 3.0.1
+info:
+  title: Narrate Mate API
+  description: REST API for Narrate Mate
+  version: "1.0"
+
+paths:
+  /books:
+    get:
+      summary: List books
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+
+      x-amazon-apigateway-integration:
+        uri: ${API_LAMBDA_ARN}
+        httpMethod: POST
+        type: aws_proxy
+        credentials: arn:aws:iam::${AWS_ACCOUNT_ID}:role/${API_GATEWAY_EXECUTION_ROLE}
+        passthroughBehavior: WHEN_NO_MATCH
+    options:
+      summary: CORS support
+      responses:
+        '200':
+          description: Default CORS response
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+            Access-Control-Allow-Methods:
+              schema:
+                type: string
+            Access-Control-Allow-Headers:
+              schema:
+                type: string
+      x-amazon-apigateway-integration:
+        type: mock
+        requestTemplates:
+          application/json: '{"statusCode": 200}'
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+  /books/{book_id}:
+    get:
+      summary: Book info
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+
+      x-amazon-apigateway-integration:
+        uri: ${API_LAMBDA_ARN}
+        httpMethod: POST
+        type: aws_proxy
+        credentials: arn:aws:iam::${AWS_ACCOUNT_ID}:role/${API_GATEWAY_EXECUTION_ROLE}
+        passthroughBehavior: WHEN_NO_MATCH
+    options:
+      summary: CORS support
+      responses:
+        '200':
+          description: Default CORS response
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+            Access-Control-Allow-Methods:
+              schema:
+                type: string
+            Access-Control-Allow-Headers:
+              schema:
+                type: string
+      x-amazon-apigateway-integration:
+        type: mock
+        requestTemplates:
+          application/json: '{"statusCode": 200}'
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+  /books/{book_id}/audio/{language}/{page_no}:
+    get:
+      summary: Audio Clip
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+
+      x-amazon-apigateway-integration:
+        uri: ${API_LAMBDA_ARN}
+        httpMethod: POST
+        type: aws_proxy
+        credentials: arn:aws:iam::${AWS_ACCOUNT_ID}:role/${API_GATEWAY_EXECUTION_ROLE}
+        passthroughBehavior: WHEN_NO_MATCH
+    options:
+      summary: CORS support
+      responses:
+        '200':
+          description: Default CORS response
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+            Access-Control-Allow-Methods:
+              schema:
+                type: string
+            Access-Control-Allow-Headers:
+              schema:
+                type: string
+      x-amazon-apigateway-integration:
+        type: mock
+        requestTemplates:
+          application/json: '{"statusCode": 200}'
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+  /languages:
+    get:
+      summary: List Languages
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+
+      x-amazon-apigateway-integration:
+        uri: ${API_LAMBDA_ARN}
+        httpMethod: POST
+        type: aws_proxy
+        credentials: arn:aws:iam::${AWS_ACCOUNT_ID}:role/${API_GATEWAY_EXECUTION_ROLE}
+        passthroughBehavior: WHEN_NO_MATCH
+    options:
+      summary: CORS support
+      responses:
+        '200':
+          description: Default CORS response
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+            Access-Control-Allow-Methods:
+              schema:
+                type: string
+            Access-Control-Allow-Headers:
+              schema:
+                type: string
+      x-amazon-apigateway-integration:
+        type: mock
+        requestTemplates:
+          application/json: '{"statusCode": 200}'
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+  /status/{book_id}:
+    get:
+      summary: Book Status
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+
+      x-amazon-apigateway-integration:
+        uri: ${API_LAMBDA_ARN}
+        httpMethod: POST
+        type: aws_proxy
+        credentials: arn:aws:iam::${AWS_ACCOUNT_ID}:role/${API_GATEWAY_EXECUTION_ROLE}
+        passthroughBehavior: WHEN_NO_MATCH
+    options:
+      summary: CORS support
+      responses:
+        '200':
+          description: Default CORS response
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+            Access-Control-Allow-Methods:
+              schema:
+                type: string
+            Access-Control-Allow-Headers:
+              schema:
+                type: string
+      x-amazon-apigateway-integration:
+        type: mock
+        requestTemplates:
+          application/json: '{"statusCode": 200}'
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+  /upload_token:
+    get:
+      summary: Upload Token
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+
+      x-amazon-apigateway-integration:
+        uri: ${API_LAMBDA_ARN}
+        httpMethod: POST
+        type: aws_proxy
+        credentials: arn:aws:iam::${AWS_ACCOUNT_ID}:role/${API_GATEWAY_EXECUTION_ROLE}
+        passthroughBehavior: WHEN_NO_MATCH
+    options:
+      summary: CORS support
+      responses:
+        '200':
+          description: Default CORS response
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+            Access-Control-Allow-Methods:
+              schema:
+                type: string
+            Access-Control-Allow-Headers:
+              schema:
+                type: string
+      x-amazon-apigateway-integration:
+        type: mock
+        requestTemplates:
+          application/json: '{"statusCode": 200}'
+        responses:
+          default:
+            statusCode: '200'
+            responseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,OPTIONS'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
